@@ -1,0 +1,10 @@
+/node_modules
+/.npm
+/.node-gyp
+/.node_repl_history
+/.npmrc
+/.nvm
+/.nvmrc
+/.nuxt
+/.nuxtignore
+.pnp.js
