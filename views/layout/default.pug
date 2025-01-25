@@ -1,0 +1,25 @@
+include ../mixin/alert.pug
+doctype html
+html
+  head
+    title #{pageTitle}
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="./css/style.css")
+
+  body
+    - const hasError = false;
+    if !hasError
+      .body
+        include ../partial/header.pug
+        .main
+          block main
+        include ../partial/footer.pug
+      script(src="./js/index.js" type="module")
+      script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js")
+      script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js")
+    else
+      .container
+        .error-container
+          h1.display-3.text-danger(style="font-weight: 950") Đã xảy ra lỗi
+          p.lead.text-warning(style="font-weight: 800") Vui lòng thử lại sau
+          p.text-muted(style="font-weight: 400") Một lỗi không xác định đã xảy ra. Vui lòng thử lại sau.
