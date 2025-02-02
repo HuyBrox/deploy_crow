@@ -40,7 +40,11 @@ const UserSchema = new mongoose.Schema({
     course: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course',
-    }
+    },
+    lastActiveAt: {
+        type: Date,
+        default: Date.now,
+    },
 }, { timestamps: true });
 
 const User = mongoose.model('User', UserSchema);

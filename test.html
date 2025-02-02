@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .video-call-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 800px;
+            border-radius: 10px;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .small-video {
+            position: absolute;
+            width: 200px;
+            height: 150px;
+            bottom: 20px;
+            right: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid white;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .controls button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .controls button:hover {
+            background-color: #0056b3;
+        }
+
+        .controls button.end-call {
+            background-color: #dc3545;
+        }
+
+        .controls button.end-call:hover {
+            background-color: #a71d2a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="video-call-container">
+        <!-- Video của người nhận -->
+        <video class="video" id="remoteVideo" autoplay></video>
+
+        <!-- Video của bạn -->
+        <div class="small-video">
+            <video class="video" id="localVideo" autoplay muted></video>
+        </div>
+
+        <!-- Điều khiển cuộc gọi -->
+        <div class="controls">
+            <button onclick="muteMic()">Tắt mic</button>
+            <button onclick="toggleVideo()">Tắt video</button>
+            <button class="end-call" onclick="endCall()">Kết thúc</button>
+        </div>
+    </div>
+
+    <script>
+        // Mocking peer connections
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+
+        // Lấy media từ camera/mic
+        navigator.mediaDevices
+            .getUserMedia({ video: true, audio: true })
+            .then((stream) => {
+                localVideo.srcObject = stream;
+                // Kết nối video từ đối tác vào remoteVideo
+                // Giả lập: remoteVideo.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error('Không thể truy cập camera/mic:', err);
+            });
+
+        function muteMic() {
+            const enabled = localVideo.srcObject.getAudioTracks()[0].enabled;
+            localVideo.srcObject.getAudioTracks()[0].enabled = !enabled;
+            alert(enabled ? 'Mic đã tắt' : 'Mic đã bật');
+        }
+
+        function toggleVideo() {
+            const enabled = localVideo.srcObject.getVideoTracks()[0].enabled;
+            localVideo.srcObject.getVideoTracks()[0].enabled = !enabled;
+            alert(enabled ? 'Video đã tắt' : 'Video đã bật');
+        }
+
+        function endCall() {
+            alert('Cuộc gọi đã kết thúc');
+            window.close(); // Đóng cửa sổ video call
+        }
+    </script>
+</body>
+
+</html>

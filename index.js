@@ -15,7 +15,9 @@ import router from './routes/index.js';
 import session from 'express-session';
 
 env.config();
-const app = express();
+
+import { app, server } from "./socket/socket.js";
+
 const PORT = process.env.PORT || 3000;
 
 // Cấu hình CORS
@@ -24,6 +26,7 @@ const corsOptions = {
   credentials: true,
 };
 app.use(cors(corsOptions));
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -31,14 +34,16 @@ app.use(session({
 }));
 app.use(bodyParser.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(session({ cookie: { maxAge: 60000 } }));
 app.use(flash());
+
 // Kết nối MongoDB
 await connectDB();
-// cấu hình method-override và body-parser
+
+// Cấu hình method-override và body-parser
 app.use(methodOverride('_method'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 // Cấu hình public folder trước
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -48,28 +53,25 @@ app.use(express.static(`${__dirname}/public`));
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'pug');
 
-// Tạo HTTP server
-const server = http.createServer(app);
+// Tích hợp PeerServer vào Express
+const peerServer = ExpressPeerServer(server, {
+  debug: true,
+  path: '/peerjs',
+  allow_discovery: true,
+  port: PORT,
+});
 
-// // Tích hợp PeerServer vào Express
-// const peerServer = ExpressPeerServer(server, {
-//   debug: true,
-//   path: '/peerjs',
-//   allow_discovery: true,
-//   port: PORT,
-// });
+// Middleware sử dụng PeerServer
+app.use('/peerjs', peerServer);
 
-// // Middleware sử dụng PeerServer
-// app.use('/peerjs', peerServer);
+// Lắng nghe sự kiện peer connect và disconnect
+peerServer.on('connection', (peer) => {
+  console.log('Peer connected:', peer.id);
+});
 
-// // Lắng nghe sự kiện peer connect và disconnect
-// peerServer.on('connection', (peer) => {
-//   console.log('Peer connected:', peer.id);
-// });
-
-// peerServer.on('disconnect', (peer) => {
-//   console.log('Peer disconnected:', peer.id);
-// });
+peerServer.on('disconnect', (peer) => {
+  console.log('Peer disconnected:', peer.id);
+});
 
 // router
 app.use(router);

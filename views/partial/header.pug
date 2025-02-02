@@ -26,6 +26,7 @@ header.header
         else if user != null
           .user-info.d-flex.align-items-center
             .mini-profile
+              input.hidden.userId(type="hidden" value=user._id)
               img(src=user.avatar alt='Avatar' width='40' height='40').avatar
               span.username(style="margin-left: 10px;") #{user.username}
             a.btn.btn-login(href='/logout') Đăng xuất
